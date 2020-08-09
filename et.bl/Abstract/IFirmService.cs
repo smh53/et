@@ -5,13 +5,8 @@ using System.Text;
 
 namespace et.bl.Abstract
 {
-   public interface IFirmService
+   public interface IFirmService : IBaseService<FirmEntity>
     {
-        void Create(FirmEntity entity);
-        void Update(FirmEntity entity);
-        void Delete(FirmEntity entity);
-
-        FirmEntity GetById(int id);
-        List<FirmEntity> GetAll();
+       
     }
 }

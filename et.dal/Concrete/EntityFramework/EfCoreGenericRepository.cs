@@ -1,57 +1,51 @@
-﻿using et.dal.Abstracts;
+﻿using et.dal.Abstract;
+using et.dal.Concrete.Context;
+using et.documents.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace et.dal.Concrete.EntityFramework
 {
-    public class EfCoreGenericRepository<TEntity, TContext> : IRepo<TEntity>
-        where TEntity: class
-        where TContext: DbContext, new()
+    public class EfCoreGenericRepository<TEntity> : IRepository<TEntity>
+        where TEntity : BaseEntity
     {
-        public void Create(TEntity entity)
+        private readonly EtContext _dbContext;
+
+        public EfCoreGenericRepository(EtContext dbContext)
+
         {
-            using (var context = new TContext())
-            {
-                context.Set<TEntity>().Add(entity);
-                context.SaveChanges();
-            }
+            _dbContext = dbContext;
+        }
+        public int Create(TEntity entity)
+        {
+            return _dbContext.Set<TEntity>().Add(entity).Entity.Id;
         }
 
         public void Delete(TEntity entity)
         {
-            using (var context = new TContext())
-            {
-                context.Set<TEntity>().Remove(entity);
-                context.SaveChanges();
-            }
+            _dbContext.Set<TEntity>().Remove(entity);
         }
 
-        public List<TEntity> GetAll()
+        public IList<TEntity> GetList()
         {
-            using (var context = new TContext())
-            {
-                return context.Set<TEntity>().ToList();
-            }
+            return _dbContext.Set<TEntity>().ToList();
         }
 
-        public TEntity GetById(int id)
+        public TEntity Get(int id)
         {
-            using (var context = new TContext())
-            {
-                return context.Set<TEntity>().Find(id);
-            }
+            return _dbContext.Set<TEntity>().Find(id);
         }
 
         public void Update(TEntity entity)
         {
-            using (var context = new TContext())
-            {
-                context.Set<TEntity>().Update(entity);
-                context.SaveChanges();
-            }
+            _dbContext.Set<TEntity>().Update(entity);
+        }
+
+        public void SaveChanges()
+        {
+            _dbContext.SaveChanges();
         }
     }
 }

@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using et.bl.Abstract;
-using et.dal.Abstracts;
+using et.dal.Abstract;
+using et.dal.Concrete.Context;
 using et.dal.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace et.api
 {
@@ -28,9 +22,10 @@ namespace et.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IFirmRepo, EfCoreFirmRepository>();
-            services.AddScoped<IFirmService, ProductManager>();
+            services.AddDbContext<EtContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EtContext")), ServiceLifetime.Transient);
+            services.AddTransient(typeof(IRepository<>), typeof(EfCoreGenericRepository<>));
             services.AddControllers();
+           
 
         }
 
